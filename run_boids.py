@@ -22,6 +22,7 @@ acceleration_param = 10
 p_catch_prey = 90
 screen_size = 400
 
+list_result =[]
 
 def initialise_canvas(window, screen_size):
     canvas = tkinter.Canvas(window, width=screen_size, height=screen_size)
@@ -130,7 +131,7 @@ def predator_behaviour(canvas, list_of_boids, predator, screen_size):
         else:
             predator.angle = math.atan2(nearest_boid.y - predator.y, nearest_boid.x - predator.x)
     predator.flock(canvas, screen_size, predator_speed)
-    canvas.after(100, predator_behaviour, canvas, list_of_boids, predator, screen_size)
+    canvas.after(1, predator_behaviour, canvas, list_of_boids, predator, screen_size)
 
 def boid_behaviours(canvas, list_of_boids, predator, screen_size, t):
     t+=1
@@ -142,6 +143,7 @@ def boid_behaviours(canvas, list_of_boids, predator, screen_size, t):
             # each other. If prey is caught, print 1 on screen and exit
             if random.randrange(1, 100) < p_catch_prey:
                 print('1')
+                list_result.append(t)
                 #print(t)
                 window.destroy()
                 return
@@ -193,12 +195,13 @@ def boid_behaviours(canvas, list_of_boids, predator, screen_size, t):
         
     # If no more boids on screen, print 0 and exit
     boids_on_screen = [b for b in list_of_boids if min(b.x, b.y) < screen_size and min(b.x, b.y) > 0]
-    if len(boids_on_screen) == 0: 
+    if len(boids_on_screen) == 0 or t > 600: 
         print('0')
+        list_result.append('0')
         window.destroy()
         return
         
-    canvas.after(100, boid_behaviours, canvas, list_of_boids, predator, screen_size, t)
+    canvas.after(1, boid_behaviours, canvas, list_of_boids, predator, screen_size, t)
 
 t = 0
 def main(no_of_boids, screen_size):
@@ -210,7 +213,6 @@ def main(no_of_boids, screen_size):
     boid_behaviours(canvas, list_of_boids, predator, screen_size, t)
     predator_behaviour(canvas, list_of_boids, predator, screen_size)
     window.mainloop()
-    
 #main(no_of_boids, screen_size)
 
 
